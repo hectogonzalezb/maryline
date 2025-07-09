@@ -27,8 +27,8 @@ model Product {
   description  String?
   price        Float
   imageUrl     String?
-  images       String[]?
-  keywords     String[]?
+  images       String[]    // ✅ lista obligatoria (puede estar vacía)
+  keywords     String[]    // ✅ lista obligatoria (puede estar vacía)
   metadata     Json?
   discount     Float?      @default(0)
   stock        Int?        @default(0)
@@ -127,11 +127,9 @@ model Blog {
   title       String
   slug        String     @unique
   description String?
-  content     String?
-  image       String?
+  content     String
+  keywords    String[]   // ✅ lista obligatoria
   category    String?
-  categories  String[]?
-  published   Boolean    @default(false)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
