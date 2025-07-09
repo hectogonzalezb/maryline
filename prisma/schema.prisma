@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String         @id @default(uuid())
+  email       String?        @unique
+  name        String?
+  password    String?
+  isAdmin     Boolean        @default(false)
+  isGuest     Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  orders      Order[]
+  colorimetry Colorimetry[]
+}
+
+model Product {
+  id           String      @id @default(uuid())
+  name         String
+  title        String?
+  slug         String?
+  description  String?
+  price        Float
+  imageUrl     String?
+  images       String[]?
+  keywords     String[]?
+  metadata     Json?
+  discount     Float?      @default(0)
+  stock        Int?        @default(0)
+  isPhysical   Boolean?    @default(true)
+  isAvailable  Boolean?    @default(true)
+  isFeatured   Boolean?    @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Relaciones
+  brandId       String?
+  brand         Brand?       @relation(fields: [brandId], references: [id])
+
+  productTypeId String?
+  productType   ProductType? @relation(fields: [productTypeId], references: [id])
+
+  colorId       String?
+  color         Color?       @relation(fields: [colorId], references: [id])
+
+  skinTypeId    String?
+  skinType      SkinType?    @relation(fields: [skinTypeId], references: [id])
+
+  subToneId     String?
+  subTone       SubTone?     @relation(fields: [subToneId], references: [id])
+
+  categoryId    String?
+  category      Category?    @relation(fields: [categoryId], references: [id])
+}
+
+model Brand {
+  id       String     @id @default(uuid())
+  name     String     @unique
+  products Product[]
+}
+
+model ProductType {
+  id       String     @id @default(uuid())
+  name     String     @unique
+  products Product[]
+}
+
+model Color {
+  id        String     @id @default(uuid())
+  name      String
+  hexCode   String
+  category  String
+  products  Product[]
+}
+
+model SkinType {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  products  Product[]
+}
+
+model SubTone {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  products  Product[]
+}
+
+model Category {
+  id       String     @id @default(uuid())
+  name     String
+  slug     String     @unique
+  products Product[]
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  total     Float
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Colorimetry {
+  id                 String   @id @default(uuid())
+  userId             String?
+  color_data         Json?
+  gpt_recommendation String?
+  skin_type          String?
+  eye_color          String?
+  hair_color         String?
+  skin_sensitive     Boolean  @default(false)
+  allergies          Boolean  @default(false)
+  organic            Boolean  @default(false)
+  is_guest           Boolean  @default(false)
+  created_at         DateTime @default(now())
+  user               User?    @relation(fields: [userId], references: [id])
+}
+
+model Blog {
+  id          String     @id @default(uuid())
+  title       String
+  slug        String     @unique
+  description String?
+  content     String?
+  image       String?
+  category    String?
+  categories  String[]?
+  published   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
